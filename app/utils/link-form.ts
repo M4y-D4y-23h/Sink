@@ -15,7 +15,12 @@ export function createLinkFormInitialValues(link: Partial<DashboardLink>): Dashb
     description: link.description ?? '',
     image: link.image ?? '',
     cloaking: link.cloaking ?? false,
-    redirectWithQuery: link.redirectWithQuery ?? false,
+    // Divergencia proposital do upstream: links novos nascem repassando os
+    // parametros de atribuicao (fbclid, ttclid, gclid). Sem isso o global
+    // NUXT_REDIRECT_WITH_QUERY nunca vale, porque o formulario grava false
+    // explicito e o middleware usa `??`, que so cai para o global em null.
+    // Links existentes com false explicito seguem preservados.
+    redirectWithQuery: link.redirectWithQuery ?? true,
     password: link.password ?? '',
     unsafe: link.unsafe ?? false,
     geo: link.geo ? Object.entries(link.geo).map(([country, url]) => ({ country, url })) : [],
